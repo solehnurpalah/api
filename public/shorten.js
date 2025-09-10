@@ -6,7 +6,7 @@
     return s;
   }
 
-  const app=document.getElementById("app"); // ⬅️ gunakan #app, bukan body
+  const app=document.getElementById("app");
   app.className="bg-dark text-light p-3";
   app.innerHTML=`
     <div class="container">
