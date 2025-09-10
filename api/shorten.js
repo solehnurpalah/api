@@ -1,4 +1,3 @@
-// api/shorten.js
 import fetch from "node-fetch";
 
 export default async function handler(req, res) {
@@ -10,7 +9,6 @@ export default async function handler(req, res) {
 
   try {
     const utoUrl = `https://u.to/?url=${encodeURIComponent(url)}&from=&a=add&callback=handleResponse`;
-
     const response = await fetch(utoUrl);
     const html = await response.text();
 
