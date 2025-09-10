@@ -1,1 +1,61 @@
-(function(){function r(n=10){const c="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";let s="";for(let i=0;i<n;i++)s+=c.charAt(Math.floor(Math.random()*c.length));return s}const app=document.body;app.className="bg-dark text-light p-3";app.innerHTML=`<div class="container"><h4 class="text-center mb-3">U.to Shortener</h4><div class="mb-3"><label class="form-label">URL Input</label><textarea id="short-input" class="form-control" rows="2"></textarea></div><div class="mb-3"><label class="form-label">Jumlah Shortlink</label><input id="count-input" type="number" min="1" value="1" class="form-control"></div><button id="short-btn" class="btn btn-success w-100 mb-3">Shorten</button><div class="mb-3"><label class="form-label">Shortened URLs</label><textarea id="short-output" class="form-control" rows="6" readonly></textarea></div><button id="copy-btn" class="btn btn-primary w-100 mb-2">Copy All</button><button id="close-btn" class="btn btn-danger w-100">Close</button></div>`;const inp=document.getElementById("short-input"),btn=document.getElementById("short-btn"),out=document.getElementById("short-output");inp.value=window.opener?window.opener.location.href:"";btn.onclick=async()=>{const base=inp.value.trim(),count=parseInt(document.getElementById("count-input").value)||1;if(!base){alert("Masukkan URL terlebih dahulu!");return}out.value="Processing...";let res=[];for(let i=0;i<count;i++){const u=base+"?="+r(10);try{const api="https://api-zeta-navy.vercel.app/api/shorten?url="+encodeURIComponent(u),j=await fetch(api),d=await j.json();res.push(d.shortURL||"Gagal")}catch(e){res.push("Error: "+e.message)}}out.value=res.join("\n")};document.getElementById("copy-btn").onclick=()=>{out.focus();out.select();document.execCommand("copy");alert("All shortlinks copied!")};document.getElementById("close-btn").onclick=()=>window.close();})();
+(function(){
+  function r(n=10){
+    const c="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let s="";
+    for(let i=0;i<n;i++) s+=c.charAt(Math.floor(Math.random()*c.length));
+    return s;
+  }
+
+  const app=document.getElementById("app"); // ⬅️ gunakan #app, bukan body
+  app.className="bg-dark text-light p-3";
+  app.innerHTML=`
+    <div class="container">
+      <h4 class="text-center mb-3">U.to Shortener</h4>
+      <div class="mb-3">
+        <label class="form-label">URL Input</label>
+        <textarea id="short-input" class="form-control" rows="2"></textarea>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Jumlah Shortlink</label>
+        <input id="count-input" type="number" min="1" value="1" class="form-control">
+      </div>
+      <button id="short-btn" class="btn btn-success w-100 mb-3">Shorten</button>
+      <div class="mb-3">
+        <label class="form-label">Shortened URLs</label>
+        <textarea id="short-output" class="form-control" rows="6" readonly></textarea>
+      </div>
+      <button id="copy-btn" class="btn btn-primary w-100 mb-2">Copy All</button>
+      <button id="close-btn" class="btn btn-danger w-100">Close</button>
+    </div>
+  `;
+
+  const inp=document.getElementById("short-input"),
+        btn=document.getElementById("short-btn"),
+        out=document.getElementById("short-output");
+
+  inp.value=window.opener?window.opener.location.href:"";
+
+  btn.onclick=async()=>{
+    const base=inp.value.trim(),
+          count=parseInt(document.getElementById("count-input").value)||1;
+    if(!base){alert("Masukkan URL terlebih dahulu!");return}
+    out.value="Processing...";
+    let res=[];
+    for(let i=0;i<count;i++){
+      const u=base+"?="+r(10);
+      try{
+        const api="https://api-zeta-navy.vercel.app/api/shorten?url="+encodeURIComponent(u),
+              j=await fetch(api), d=await j.json();
+        res.push(d.shortURL||"Gagal")
+      }catch(e){res.push("Error: "+e.message)}
+    }
+    out.value=res.join("\n");
+  };
+
+  document.getElementById("copy-btn").onclick=()=>{
+    out.focus();out.select();
+    document.execCommand("copy");
+    alert("All shortlinks copied!")
+  };
+  document.getElementById("close-btn").onclick=()=>window.close();
+})();
