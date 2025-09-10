@@ -1,20 +1,26 @@
 export default async function handler(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   try {
     const { url } = req.query;
-
     if (!url) {
-      return res.status(400).json({ error: "URL cannot be empty" });
+      return res.status(400).json({ error: "URL is required" });
     }
 
-    const utoUrl = `https://u.to/?url=${encodeURIComponent(url)}&from=&a=add&callback=handleResponse`;
-    const response = await fetch(utoUrl);  // fetch bawaan Node.js
-    const html = await response.text();
+    const fetchRes = await fetch("https://u.to/?url=" + encodeURIComponent(url) + "&from=&a=add");
+    const text = await fetchRes.text();
 
-    const match = html.match(/\$\('#shurlout'\)\.val\('(.*?)'\)/);
-    const shortUrl = match ? match[1] : null;
+    const match = text.match(/\$\('#shurlout'\)\.val\('(.*?)'\)/);
+    const shortURL = match ? match[1] : null;
 
-    return res.status(200).json({ shortURL: shortUrl });
+    res.status(200).json({ shortURL });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 }
